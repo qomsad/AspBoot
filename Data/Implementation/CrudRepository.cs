@@ -1,45 +1,31 @@
-﻿using System.Linq.Expressions;
-using AspBoot.Data.Interface;
+﻿using AspBoot.Data.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspBoot.Data.Implementation;
 
-public abstract class CrudRepository<TEntity, TKey, TCount>(DbContext context)
-    : ICrudRepository<TEntity, TKey, TCount>
+public abstract class CrudRepository<TEntity, TKey>(DbContext context) : ICrudRepository<TEntity, TKey>
     where TEntity : class
-    where TCount : struct
 {
     protected DbContext Context { get; set; } = context;
     protected DbSet<TEntity> DbSet { get; set; } = context.Set<TEntity>();
 
-    public virtual Expression<Func<TEntity, object>>[] Projection()
+    public virtual IQueryable<TEntity> Projection(IQueryable<TEntity> query)
     {
-        return [];
+        return query;
     }
 
     public TEntity Create(TEntity entity)
     {
-        var result = DbSet.Add(entity);
+        DbSet.Add(entity);
         Context.SaveChanges();
-        return result.Entity;
+        return entity;
     }
 
-    public IEnumerable<TEntity> CreateAll(IEnumerable<TEntity> entities)
+    public IQueryable<TEntity> Get(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null)
     {
-        var enumerable = entities.ToList();
-        DbSet.AddRange(enumerable);
-        Context.SaveChanges();
-        return enumerable;
-    }
-
-    public TEntity? Get(TEntity entity)
-    {
-        return WithProjection().FirstOrDefault(entity);
-    }
-
-    public IEnumerable<TEntity> GetAll()
-    {
-        throw new NotImplementedException();
+        return query != null
+            ? query(DbSet.AsQueryable())
+            : Projection(DbSet.AsQueryable());
     }
 
     public TEntity? GetById(TKey id)
@@ -49,51 +35,43 @@ public abstract class CrudRepository<TEntity, TKey, TCount>(DbContext context)
             ?.FindPrimaryKey()
             ?.Properties;
         var pk = properties is { Count: > 0 } ? properties[0].PropertyInfo : null;
-        return WithProjection().FirstOrDefault(entity => pk!.GetValue(entity)!.Equals(id));
+        return Projection(DbSet.AsQueryable()).FirstOrDefault(entity => pk!.GetValue(entity)!.Equals(id));
+    }
+
+    public TEntity? GetOne(TEntity entity)
+    {
+        return Get().FirstOrDefault(e => e == entity);
+    }
+
+    public TEntity? GetOne(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null)
+    {
+        return Get(query).FirstOrDefault();
+    }
+
+    public IEnumerable<TEntity>? GetAll(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null)
+    {
+        return Get(query).ToList();
     }
 
     public TEntity Update(TEntity entity)
     {
-        throw new NotImplementedException();
-    }
-
-    public IEnumerable<TEntity> UpdateAll(IEnumerable<TEntity> entities)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DeleteById(TKey id)
-    {
-        throw new NotImplementedException();
+        DbSet.Update(entity);
+        Context.SaveChanges();
+        return entity;
     }
 
     public void Delete(TEntity entity)
     {
-        throw new NotImplementedException();
+        DbSet.Remove(entity);
+        Context.SaveChanges();
     }
 
-    public TCount Count()
+    public void DeleteById(TKey id)
     {
-        throw new NotImplementedException();
-    }
-
-    public bool Exists(TEntity entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool ExistsById(TKey id)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected IQueryable<TEntity> WithProjection()
-    {
-        return Projection().Aggregate(DbSet.AsQueryable(), (e, property) => e.Include(property));
-    }
-
-    protected IQueryable<TEntity> WithProjection(params Expression<Func<TEntity, object>>[] projection)
-    {
-        return projection.Aggregate(DbSet.AsQueryable(), (e, property) => e.Include(property));
+        var entity = GetById(id);
+        if (entity != null)
+        {
+            Delete(entity);
+        }
     }
 }

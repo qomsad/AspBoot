@@ -1,24 +1,10 @@
 ﻿namespace AspBoot.Data.Interface;
 
-public interface ICrudRepository<TEntity, TKey, TCount> : IRepository<TEntity, TKey, TCount>
-    where TEntity : class
-    where TCount : struct
+public interface ICrudRepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class
 {
-    TEntity Create(TEntity entity);
-    IEnumerable<TEntity> CreateAll(IEnumerable<TEntity> entities);
-
-    TEntity? Get(TEntity entity);
-    IEnumerable<TEntity> GetAll();
-    TEntity? GetById(TKey id);
-
-    TEntity Update(TEntity entity);
-    IEnumerable<TEntity> UpdateAll(IEnumerable<TEntity> entities);
-
-    void DeleteById(TKey id);
-    void Delete(TEntity entity);
-
-    TCount Count();
-
-    bool Exists(TEntity entity);
-    bool ExistsById(TKey id);
+    public TEntity Create(TEntity entity);
+    public IQueryable<TEntity> Get(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null);
+    public TEntity? GetById(TKey id);
+    public TEntity Update(TEntity entity);
+    public void Delete(TEntity entity);
 }

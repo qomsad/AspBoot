@@ -1,8 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿namespace AspBoot.Data.Interface;
 
-namespace AspBoot.Data.Interface;
-
-public interface IRepository<TEntity, TKey, TCount>
+public interface IRepository<TEntity, TKey>
 {
-    public Expression<Func<TEntity, object>>[] Projection();
+    public IQueryable<TEntity> Projection(IQueryable<TEntity> query);
 }

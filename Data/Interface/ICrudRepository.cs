@@ -4,7 +4,6 @@ public interface ICrudRepository<TEntity> : IRepository<TEntity> where TEntity :
 {
     public TEntity Create(TEntity entity);
     public IQueryable<TEntity> Get();
-    public TEntity? Get(TEntity entity);
     public TEntity Update(TEntity entity);
     public void Delete(TEntity entity);
 }

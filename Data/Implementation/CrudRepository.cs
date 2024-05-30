@@ -25,11 +25,6 @@ public abstract class CrudRepository<TEntity>(DbContext context) : ICrudReposito
         return Projection(DbSet.AsQueryable());
     }
 
-    public TEntity? Get(TEntity entity)
-    {
-        return Get().FirstOrDefault(entity);
-    }
-
     public IQueryable<TEntity> Get(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query)
     {
         return query != null ? query(Get()) : Get();

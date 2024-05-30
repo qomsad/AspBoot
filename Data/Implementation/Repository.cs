@@ -66,6 +66,7 @@ public class Repository<TEntity, TKey>(DbContext context) :
             PagesCount = (int) Math.Ceiling((double) total / request.PageSize),
             HasNext = (request.PageIndex * request.PageSize) < total,
             HasPrev = request.PageIndex > 1,
+            SearchString = request.SearchString
         };
     }
 

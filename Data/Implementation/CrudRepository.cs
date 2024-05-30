@@ -6,8 +6,8 @@ namespace AspBoot.Data.Implementation;
 public abstract class CrudRepository<TEntity, TKey>(DbContext context) : ICrudRepository<TEntity, TKey>
     where TEntity : class
 {
-    protected DbContext Context { get; set; } = context;
-    protected DbSet<TEntity> DbSet { get; set; } = context.Set<TEntity>();
+    protected DbContext Context { get; } = context;
+    protected DbSet<TEntity> DbSet { get; } = context.Set<TEntity>();
 
     public virtual IQueryable<TEntity> Projection(IQueryable<TEntity> query)
     {
@@ -21,36 +21,19 @@ public abstract class CrudRepository<TEntity, TKey>(DbContext context) : ICrudRe
         return entity;
     }
 
-    public IQueryable<TEntity> Get(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null)
+    public IQueryable<TEntity> Get()
     {
-        return query != null
-            ? query(DbSet.AsQueryable())
-            : Projection(DbSet.AsQueryable());
+        return Projection(DbSet.AsQueryable());
     }
 
-    public TEntity? GetById(TKey id)
+    public TEntity? Get(TEntity entity)
     {
-        var properties = Context.Model
-            .FindEntityType(typeof(TEntity))
-            ?.FindPrimaryKey()
-            ?.Properties;
-        var pk = properties is { Count: > 0 } ? properties[0].PropertyInfo : null;
-        return Projection(DbSet.AsQueryable()).FirstOrDefault(entity => pk!.GetValue(entity)!.Equals(id));
+        return Get().FirstOrDefault(entity);
     }
 
-    public TEntity? GetOne(TEntity entity)
+    public IQueryable<TEntity> Get(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query)
     {
-        return Get().FirstOrDefault(e => e == entity);
-    }
-
-    public TEntity? GetOne(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null)
-    {
-        return Get(query).FirstOrDefault();
-    }
-
-    public IEnumerable<TEntity>? GetAll(Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null)
-    {
-        return Get(query).ToList();
+        return query != null ? query(Get()) : Get();
     }
 
     public TEntity Update(TEntity entity)
@@ -64,14 +47,5 @@ public abstract class CrudRepository<TEntity, TKey>(DbContext context) : ICrudRe
     {
         DbSet.Remove(entity);
         Context.SaveChanges();
-    }
-
-    public void DeleteById(TKey id)
-    {
-        var entity = GetById(id);
-        if (entity != null)
-        {
-            Delete(entity);
-        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace AspBoot.Data.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace AspBoot.Data.Model;
 
 public static class Filter
 {
@@ -9,6 +11,7 @@ public static class Filter
         public required IEnumerable<string> Values { get; init; }
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Operator
     {
         Eq, // ==

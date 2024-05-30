@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspBoot.Data.Implementation;
 
-public class Repository<TEntity, TKey>(DbContext context) :
-    CrudRepository<TEntity, TKey>(context),
-    IPageableRepository<TEntity, TKey>,
-    ISearchableRepository<TEntity, TKey>,
-    ISortableRepository<TEntity, TKey>,
-    IFilterableRepository<TEntity, TKey>
+public class Repository<TEntity>(DbContext context) :
+    CrudRepository<TEntity>(context),
+    IPageableRepository<TEntity>,
+    ISearchableRepository<TEntity>,
+    ISortableRepository<TEntity>,
+    IFilterableRepository<TEntity>
     where TEntity : class
 {
     protected virtual IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, Filter.Predicate filter)

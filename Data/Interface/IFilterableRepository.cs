@@ -3,7 +3,7 @@ using AspBoot.Data.Request;
 
 namespace AspBoot.Data.Interface;
 
-public interface IFilterableRepository<TEntity, TKey> : IRepository<TEntity, TKey>
+public interface IFilterableRepository<TEntity> : IRepository<TEntity>
 {
     PageSortedFiltered<TEntity> GetFiltered(RequestPageSortedFiltered request,
         Func<IQueryable<TEntity>, IQueryable<TEntity>>? query = null);

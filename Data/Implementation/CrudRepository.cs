@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspBoot.Data.Implementation;
 
-public abstract class CrudRepository<TEntity, TKey>(DbContext context) : ICrudRepository<TEntity, TKey>
-    where TEntity : class
+public abstract class CrudRepository<TEntity>(DbContext context) : ICrudRepository<TEntity> where TEntity : class
 {
     protected DbContext Context { get; } = context;
     protected DbSet<TEntity> DbSet { get; } = context.Set<TEntity>();

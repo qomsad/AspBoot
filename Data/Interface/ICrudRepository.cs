@@ -1,6 +1,6 @@
 ﻿namespace AspBoot.Data.Interface;
 
-public interface ICrudRepository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntity : class
+public interface ICrudRepository<TEntity> : IRepository<TEntity> where TEntity : class
 {
     public TEntity Create(TEntity entity);
     public IQueryable<TEntity> Get();

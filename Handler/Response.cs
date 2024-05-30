@@ -98,7 +98,7 @@ public class Response<TRequest, TStatus>
             }
         }
 
-        var message = actions.Select(kv => ($"{kv.Key}")).ToList();
-        return unknown($"[{String.Join(",\n", message)}]");
+        var message = actions.Select(kv => kv.Key);
+        return unknown(message);
     }
 }

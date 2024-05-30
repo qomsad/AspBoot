@@ -4,5 +4,5 @@ namespace AspBoot.Data.Request;
 
 public class RequestPageSortedFiltered : RequestPageSorted
 {
-    public IEnumerable<Filter.Predicate> Predicates { get; init; } = [];
+    public Filter.Predicate? Predicates { get; init; }
 }

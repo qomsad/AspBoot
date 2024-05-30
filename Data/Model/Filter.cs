@@ -6,9 +6,9 @@ public static class Filter
 {
     public class Predicate
     {
-        public required string Selector { get; init; }
-        public required Operator Operator { get; init; }
-        public required IEnumerable<string> Values { get; init; }
+        public string Selector { get; init; } = "";
+        public Operator Operator { get; init; } = Operator.In;
+        public string Values { get; init; } = "";
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

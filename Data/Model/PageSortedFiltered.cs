@@ -2,5 +2,5 @@
 
 public class PageSortedFiltered<TEntity> : PageSorted<TEntity>
 {
-    public IEnumerable<Filter.Predicate> Predicates { get; init; } = [];
+    public Filter.Predicate? Predicates { get; init; }
 }

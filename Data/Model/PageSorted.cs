@@ -2,5 +2,5 @@
 
 public class PageSorted<TEntity> : Page<TEntity>
 {
-    public IEnumerable<Sort.Order> Orders { get; init; } = [];
+    public Sort.Order? Orders { get; init; }
 }

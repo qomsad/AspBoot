@@ -13,12 +13,12 @@ public class Repository<TEntity>(DbContext context) :
     IFilterableRepository<TEntity>
     where TEntity : class
 {
-    protected virtual IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, Filter.Predicate filter)
+    protected virtual IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, Filter.Predicate? filter)
     {
         return query;
     }
 
-    protected virtual IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, Sort.Order order)
+    protected virtual IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, Sort.Order? order)
     {
         return query;
     }
@@ -75,7 +75,7 @@ public class Repository<TEntity>(DbContext context) :
     {
         var queryable = Get(query);
 
-        queryable = request.Orders.Aggregate(queryable, ApplySorting);
+        queryable = ApplySorting(queryable, request.Orders);
 
         var total = queryable.Count();
         queryable = queryable.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize);
@@ -98,8 +98,8 @@ public class Repository<TEntity>(DbContext context) :
     {
         var queryable = Get(query);
 
-        queryable = request.Predicates.Aggregate(queryable, ApplyFiltering);
-        queryable = request.Orders.Aggregate(queryable, ApplySorting);
+        queryable = ApplyFiltering(queryable, request.Predicates);
+        queryable = ApplySorting(queryable, request.Orders);
 
         var total = queryable.Count();
         queryable = queryable.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize);

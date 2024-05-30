@@ -6,7 +6,7 @@ public static class Sort
 {
     public class Order
     {
-        public required string Selector { get; init; }
+        public string Selector { get; init; } = "";
         public Direction Direction { get; init; } = Direction.Asc;
     }
 

@@ -33,7 +33,8 @@ public class Repository<TEntity>(DbContext context) :
     {
         var queryable = Get(query);
         var total = queryable.Count();
-        queryable = queryable.Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize);
+        queryable = queryable.Skip(((request.PageIndex > 0 ? request.PageIndex - 1 : 0)) * request.PageSize)
+            .Take(request.PageSize);
         var content = queryable.ToList();
         return new Page<TEntity>
         {
